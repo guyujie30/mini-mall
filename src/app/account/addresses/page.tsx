@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -131,18 +131,16 @@ export default function AddressesPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center gap-2 mb-6">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/account">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
+        <Link href="/account" className={buttonVariants({ variant: "ghost", size: "icon" })}>
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
         <h1 className="text-2xl font-bold">收货地址</h1>
       </div>
 
       <div className="flex justify-between items-center mb-6">
         <p className="text-muted-foreground">管理您的收货地址</p>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
+          <DialogTrigger>
             <Button onClick={resetForm}>
               <Plus className="mr-2 h-4 w-4" />
               添加地址

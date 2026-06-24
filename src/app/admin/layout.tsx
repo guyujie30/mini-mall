@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Package, ShoppingCart, Tag, Users } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { LayoutDashboard, Package, ShoppingCart, Tag } from "lucide-react"
+import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const menuItems = [
@@ -27,17 +27,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               const Icon = item.icon
               const isActive = pathname === item.href
               return (
-                <Button
+                <Link
                   key={item.href}
-                  variant={isActive ? "secondary" : "ghost"}
-                  className={cn("w-full justify-start", isActive && "font-medium")}
-                  asChild
+                  href={item.href}
+                  className={buttonVariants({
+                    variant: isActive ? "secondary" : "ghost",
+                    className: cn("w-full justify-start", isActive && "font-medium"),
+                  })}
                 >
-                  <Link href={item.href}>
-                    <Icon className="mr-2 h-4 w-4" />
-                    {item.label}
-                  </Link>
-                </Button>
+                  <Icon className="mr-2 h-4 w-4" />
+                  {item.label}
+                </Link>
               )
             })}
           </nav>

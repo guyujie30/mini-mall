@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, ShoppingBag, Star, Truck } from "lucide-react"
@@ -32,17 +32,13 @@ export default async function HomePage() {
               精选优质商品，简约而不简单。会员专享折扣，越买越省。
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" asChild>
-                <Link href="/products">
-                  立即选购
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900" asChild>
-                <Link href="/member">
-                  了解会员
-                </Link>
-              </Button>
+              <Link href="/products" className={buttonVariants({ size: "lg" })}>
+                立即选购
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+              <Link href="/member" className={buttonVariants({ size: "lg", variant: "outline" }) + " border-white text-white hover:bg-white hover:text-gray-900"}>
+                了解会员
+              </Link>
             </div>
           </div>
         </div>
@@ -82,12 +78,10 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold">商品分类</h2>
-            <Button variant="ghost" asChild>
-              <Link href="/products">
-                查看全部
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <Link href="/products" className={buttonVariants({ variant: "ghost" })}>
+              查看全部
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {categories.map((category) => (
@@ -111,12 +105,10 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl md:text-3xl font-bold">精选商品</h2>
-            <Button variant="ghost" asChild>
-              <Link href="/products">
-                查看全部
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <Link href="/products" className={buttonVariants({ variant: "ghost" })}>
+              查看全部
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
@@ -141,11 +133,9 @@ export default async function HomePage() {
                   </div>
                 </CardContent>
                 <CardFooter className="p-4 pt-0">
-                  <Button className="w-full" asChild>
-                    <Link href={`/products/${product.id}`}>
-                      查看详情
-                    </Link>
-                  </Button>
+                  <Link href={`/products/${product.id}`} className={buttonVariants({ className: "w-full" })}>
+                    查看详情
+                  </Link>
                 </CardFooter>
               </Card>
             ))}
@@ -165,16 +155,12 @@ export default async function HomePage() {
                 注册即享会员专属折扣，消费越多等级越高，优惠越多！
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" variant="secondary" asChild>
-                  <Link href="/auth/register">
-                    立即注册
-                  </Link>
-                </Button>
-                <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary" asChild>
-                  <Link href="/member">
-                    了解更多
-                  </Link>
-                </Button>
+                <Link href="/auth/register" className={buttonVariants({ size: "lg", variant: "secondary" })}>
+                  立即注册
+                </Link>
+                <Link href="/member" className={buttonVariants({ size: "lg", variant: "outline" }) + " border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"}>
+                  了解更多
+                </Link>
               </div>
             </CardContent>
           </Card>

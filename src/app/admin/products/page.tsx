@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/admin"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Pencil } from "lucide-react"
@@ -23,12 +23,10 @@ export default async function AdminProductsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">商品管理</h1>
-        <Button asChild>
-          <Link href="/admin/products/new">
-            <Plus className="mr-2 h-4 w-4" />
-            添加商品
-          </Link>
-        </Button>
+        <Link href="/admin/products/new" className={buttonVariants()}>
+          <Plus className="mr-2 h-4 w-4" />
+          添加商品
+        </Link>
       </div>
 
       <Card>
@@ -61,11 +59,9 @@ export default async function AdminProductsPage() {
                     </Badge>
                   </td>
                   <td className="p-4 text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/products/${product.id}/edit`}>
-                        <Pencil className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <Link href={`/admin/products/${product.id}/edit`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                      <Pencil className="h-4 w-4" />
+                    </Link>
                   </td>
                 </tr>
               ))}

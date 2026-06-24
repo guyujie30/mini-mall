@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useParams, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
@@ -116,9 +116,7 @@ export default function OrderDetailPage() {
     return (
       <div className="container mx-auto py-16 text-center">
         <p className="text-muted-foreground mb-4">订单不存在</p>
-        <Button asChild>
-          <Link href="/account/orders">返回订单列表</Link>
-        </Button>
+        <Link href="/account/orders" className={buttonVariants()}>返回订单列表</Link>
       </div>
     )
   }
@@ -126,11 +124,9 @@ export default function OrderDetailPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center gap-2 mb-6">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/account/orders">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
+        <Link href="/account/orders" className={buttonVariants({ variant: "ghost", size: "icon" })}>
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
         <h1 className="text-2xl font-bold">订单详情</h1>
       </div>
 

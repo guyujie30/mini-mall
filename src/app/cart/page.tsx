@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
@@ -22,7 +21,6 @@ interface CartItem {
 }
 
 export default function CartPage() {
-  const router = useRouter()
   const { data: session } = useSession()
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(true)
@@ -99,9 +97,7 @@ export default function CartPage() {
           <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground" />
           <h1 className="text-2xl font-bold">请先登录</h1>
           <p className="text-muted-foreground">登录后查看购物车</p>
-          <Button asChild>
-            <Link href="/auth/login">去登录</Link>
-          </Button>
+          <Link href="/auth/login" className={buttonVariants()}>去登录</Link>
         </div>
       </div>
     )
@@ -114,9 +110,7 @@ export default function CartPage() {
           <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground" />
           <h1 className="text-2xl font-bold">购物车是空的</h1>
           <p className="text-muted-foreground">快去挑选你喜欢的商品吧！</p>
-          <Button asChild>
-            <Link href="/products">去购物</Link>
-          </Button>
+          <Link href="/products" className={buttonVariants()}>去购物</Link>
         </div>
       </div>
     )
@@ -228,12 +222,12 @@ export default function CartPage() {
                 <span>总计</span>
                 <span className="text-primary">¥{total}</span>
               </div>
-              <Button className="w-full" size="lg" asChild>
-                <Link href="/checkout">去结算</Link>
-              </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/products">继续购物</Link>
-              </Button>
+              <Link href="/checkout" className={buttonVariants({ size: "lg", className: "w-full" })}>
+                去结算
+              </Link>
+              <Link href="/products" className={buttonVariants({ variant: "outline", className: "w-full" })}>
+                继续购物
+              </Link>
             </CardContent>
           </Card>
         </div>

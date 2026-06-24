@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -104,9 +104,7 @@ export default function CheckoutPage() {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
         <p className="text-muted-foreground mb-4">购物车为空</p>
-        <Button asChild>
-          <Link href="/products">去购物</Link>
-        </Button>
+        <Link href="/products" className={buttonVariants()}>去购物</Link>
       </div>
     )
   }
@@ -114,11 +112,9 @@ export default function CheckoutPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center gap-2 mb-6">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/cart">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
+        <Link href="/cart" className={buttonVariants({ variant: "ghost", size: "icon" })}>
+          <ArrowLeft className="h-4 w-4" />
+        </Link>
         <h1 className="text-2xl md:text-3xl font-bold">结算</h1>
       </div>
 
@@ -136,9 +132,7 @@ export default function CheckoutPage() {
               {addresses.length === 0 ? (
                 <div className="text-center py-4">
                   <p className="text-muted-foreground mb-2">暂无收货地址</p>
-                  <Button variant="outline" asChild>
-                    <Link href="/account/addresses">添加地址</Link>
-                  </Button>
+                  <Link href="/account/addresses" className={buttonVariants({ variant: "outline" })}>添加地址</Link>
                 </div>
               ) : (
                 <RadioGroup value={selectedAddress} onValueChange={setSelectedAddress}>

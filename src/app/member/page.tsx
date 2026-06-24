@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Check, Crown, Star, Zap } from "lucide-react"
@@ -101,11 +101,9 @@ export default function MemberPage() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-full" variant={member.level === 3 ? "default" : "outline"} asChild>
-                  <Link href="/auth/register">
-                    {member.level === 1 ? "立即注册" : "了解更多"}
-                  </Link>
-                </Button>
+                <Link href="/auth/register" className={buttonVariants({ className: "w-full", variant: member.level === 3 ? "default" : "outline" })}>
+                  {member.level === 1 ? "立即注册" : "了解更多"}
+                </Link>
               </CardContent>
             </Card>
           )
@@ -149,9 +147,7 @@ export default function MemberPage() {
           <CardContent className="p-8">
             <h3 className="text-xl font-bold mb-2">准备好成为会员了吗？</h3>
             <p className="mb-4 opacity-90">立即注册，享受专属优惠！</p>
-            <Button size="lg" variant="secondary" asChild>
-              <Link href="/auth/register">立即注册</Link>
-            </Button>
+            <Link href="/auth/register" className={buttonVariants({ size: "lg", variant: "secondary" })}>立即注册</Link>
           </CardContent>
         </Card>
       </div>

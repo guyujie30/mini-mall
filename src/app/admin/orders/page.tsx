@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/admin"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Eye } from "lucide-react"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -74,11 +74,9 @@ export default async function AdminOrdersPage() {
                     {new Date(order.createdAt).toLocaleDateString("zh-CN")}
                   </td>
                   <td className="p-4 text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/orders/${order.id}`}>
-                        <Eye className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <Link href={`/admin/orders/${order.id}`} className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                      <Eye className="h-4 w-4" />
+                    </Link>
                   </td>
                 </tr>
               ))}

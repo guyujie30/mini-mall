@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ShoppingCart, User, Menu, Search, LogOut, Package } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
   DropdownMenu,
@@ -40,17 +39,13 @@ export function Header() {
 
           {/* Right Actions */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/search">
-                <Search className="h-5 w-5" />
-              </Link>
-            </Button>
+            <Link href="/search" className={buttonVariants({ variant: "ghost", size: "icon" })}>
+              <Search className="h-5 w-5" />
+            </Link>
 
-            <Button variant="ghost" size="icon" className="relative" asChild>
-              <Link href="/cart">
-                <ShoppingCart className="h-5 w-5" />
-              </Link>
-            </Button>
+            <Link href="/cart" className={buttonVariants({ variant: "ghost", size: "icon" }) + " relative"}>
+              <ShoppingCart className="h-5 w-5" />
+            </Link>
 
             {session ? (
               <DropdownMenu>
@@ -88,9 +83,9 @@ export function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/auth/login">登录</Link>
-              </Button>
+              <Link href="/auth/login" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+                登录
+              </Link>
             )}
 
             {/* Mobile Menu */}
