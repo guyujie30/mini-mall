@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { prisma } from "@/lib/prisma"
+import { parseImages } from "@/lib/utils"
 
 interface ProductsPageProps {
   searchParams: Promise<{ category?: string }>
@@ -87,10 +88,18 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           {products.map((product) => (
             <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
               <CardHeader className="p-0">
-                <div className="aspect-square bg-muted relative">
-                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                    商品图片
-                  </div>
+                <div className="aspect-square bg-muted relative overflow-hidden">
+                  {product.images && product.images !== "[]" ? (
+                    <img
+                      src={parseImages(product.images)[0] || "/placeholder.png"}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                      暂无图片
+                    </div>
+                  )}
                   {product.isFeatured && (
                     <Badge className="absolute top-2 left-2">推荐</Badge>
                   )}

@@ -5,7 +5,7 @@ import { stripe, isStripeConfigured } from "@/lib/stripe"
 import { z } from "zod"
 
 const checkoutSchema = z.object({
-  orderId: z.string().min(1),
+  orderId: z.string(),
 })
 
 export async function POST(request: Request) {

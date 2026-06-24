@@ -2,12 +2,22 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useParams, useSearchParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { Button, buttonVariants } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Package, MapPin, CreditCard } from "lucide-react"
+import {
+  ArrowLeft,
+  Package,
+  MapPin,
+  CreditCard,
+} from "lucide-react"
 import { toast } from "sonner"
 
 interface OrderDetail {
@@ -50,7 +60,13 @@ const statusLabels: Record<string, string> = {
   REFUNDED: "已退款",
 }
 
-const statusColors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+type StatusVariant =
+  | "default"
+  | "secondary"
+  | "destructive"
+  | "outline"
+
+const statusColors: Record<string, StatusVariant> = {
   PENDING: "outline",
   PAID: "default",
   SHIPPED: "default",
@@ -61,7 +77,7 @@ const statusColors: Record<string, "default" | "secondary" | "destructive" | "ou
 
 export default function OrderDetailPage() {
   const params = useParams()
-  const searchParams = useSearchParams()
+  const router = useRouter()
   const [order, setOrder] = useState<OrderDetail | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -73,21 +89,13 @@ export default function OrderDetailPage() {
         setLoading(false)
       })
       .catch(() => setLoading(false))
-
-    // 检查支付结果
-    if (searchParams.get("success") === "true") {
-      toast.success("支付成功！")
-    }
-    if (searchParams.get("canceled") === "true") {
-      toast.info("支付已取消")
-    }
-  }, [params.id, searchParams])
+  }, [params.id])
 
   const handlePay = async () => {
     if (!order) return
 
     try {
-      const response = await fetch("/api/checkout", {
+      const response = await fetch("/api/mock-payment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ orderId: order.id }),
@@ -96,15 +104,14 @@ export default function OrderDetailPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        toast.error(data.error || "创建支付失败")
+        toast.error(data.error || "支付失败")
         return
       }
 
-      if (data.url) {
-        window.location.href = data.url
-      }
+      toast.success("支付成功！")
+      router.push("/payment/success")
     } catch {
-      toast.error("创建支付失败")
+      toast.error("支付失败")
     }
   }
 
@@ -124,7 +131,13 @@ export default function OrderDetailPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center gap-2 mb-6">
-        <Link href="/account/orders" className={buttonVariants({ variant: "ghost", size: "icon" })}>
+        <Link
+          href="/account/orders"
+          className={buttonVariants({
+            variant: "ghost",
+            size: "icon",
+          })}
+        >
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <h1 className="text-2xl font-bold">订单详情</h1>
@@ -176,10 +189,17 @@ export default function OrderDetailPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               {order.items.map((item) => (
-                <div key={item.id} className="flex justify-between items-center">
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center"
+                >
                   <div>
-                    <span className="font-medium">{item.product.name}</span>
-                    <span className="text-muted-foreground ml-2">x{item.quantity}</span>
+                    <span className="font-medium">
+                      {item.product.name}
+                    </span>
+                    <span className="text-muted-foreground ml-2">
+                      x{item.quantity}
+                    </span>
                   </div>
                   <span>¥{item.subtotal}</span>
                 </div>
@@ -196,9 +216,11 @@ export default function OrderDetailPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="font-medium">{order.address.name} {order.address.phone}</div>
+              <div className="font-medium">
+                {order.address.name} {order.address.phone}
+              </div>
               <div className="text-sm text-muted-foreground">
-                {order.address.province}{order.address.city}{order.address.district}{order.address.detail}
+                {order.address.province} {order.address.city} {order.address.district} {order.address.detail}
               </div>
             </CardContent>
           </Card>
@@ -213,18 +235,20 @@ export default function OrderDetailPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">商品总额</span>
-                <span>¥{order.totalAmount}</span>
+                <span>¥{order.totalAmount.toFixed(2)}</span>
               </div>
               {order.discountAmount > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>会员折扣</span>
-                  <span>-¥{order.discountAmount}</span>
+                  <span>-¥{order.discountAmount.toFixed(2)}</span>
                 </div>
               )}
               <Separator />
               <div className="flex justify-between font-bold text-lg">
                 <span>实付金额</span>
-                <span className="text-primary">¥{order.finalAmount}</span>
+                <span className="text-primary">
+                  ¥{order.finalAmount.toFixed(2)}
+                </span>
               </div>
 
               {order.status === "PENDING" && (

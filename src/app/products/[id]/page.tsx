@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
+import { parseImages } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Truck, Shield, RotateCcw } from "lucide-react"
@@ -32,10 +33,18 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Images */}
         <div className="space-y-4">
-          <div className="aspect-square bg-muted rounded-lg relative">
-            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-lg">
-              商品图片
-            </div>
+          <div className="aspect-square bg-muted rounded-lg relative overflow-hidden">
+            {product.images && product.images !== "[]" ? (
+              <img
+                src={parseImages(product.images)[0] || "/placeholder.png"}
+                alt={product.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-lg">
+                暂无图片
+              </div>
+            )}
             {product.isFeatured && (
               <Badge className="absolute top-4 left-4">推荐</Badge>
             )}

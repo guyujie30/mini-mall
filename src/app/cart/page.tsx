@@ -17,6 +17,7 @@ interface CartItem {
     name: string
     price: number
     stock: number
+    images: string
   }
 }
 
@@ -142,10 +143,23 @@ export default function CartPage() {
               <CardContent className="p-4">
                 <div className="flex gap-4">
                   {/* Image */}
-                  <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0">
-                    <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
-                      图片
-                    </div>
+                  <div className="w-24 h-24 bg-muted rounded-lg flex-shrink-0 overflow-hidden">
+                    {item.product.images &&
+                    item.product.images !== "[]" ? (
+                      <img
+                        src={
+                          JSON.parse(
+                            item.product.images
+                          )[0] || "/placeholder.png"
+                        }
+                        alt={item.product.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
+                        暂无图片
+                      </div>
+                    )}
                   </div>
 
                   {/* Info */}

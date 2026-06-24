@@ -139,9 +139,15 @@ userId + productId 联合唯一
 - TypeScript 严格模式
 - UI 文案用中文
 - 代码注释用中文
+- 行宽限制 80 字符
 
 ## Skills
 - `/crud-generator`: 生成 CRUD 功能模块（API + 页面 + 表单）
+
+## 后台管理 CRUD 功能
+- [x] 商品管理：列表、新增、编辑、下架
+- [x] 分类管理：列表、新增、编辑、删除
+- [x] 订单管理：列表、详情、状态更新
 
 ## 待开发
 - [x] 后端 API（商品/购物车/订单/地址）
@@ -149,9 +155,10 @@ userId + productId 联合唯一
 - [x] Stripe 支付集成（基础配置）
 - [x] 后台管理页面
 - [x] 会员自动升级逻辑
-- [ ] 商品图片上传
-- [ ] 搜索功能优化
-- [ ] 订单详情页支付按钮
+- [x] 商品图片上传
+- [x] 搜索功能
+- [x] 订单详情页支付按钮
+- [x] 后台 CRUD 功能
 
 <!-- superpowers-zh:begin (do not edit between these markers) -->
 # Superpowers-ZH 中文增强版
