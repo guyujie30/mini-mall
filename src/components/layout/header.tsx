@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { ShoppingCart, User, Menu, Search, LogOut, Package } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
   DropdownMenu,
@@ -47,10 +47,8 @@ export function Header() {
 
             {session ? (
               <DropdownMenu>
-                <DropdownMenuTrigger>
-                  <Button variant="ghost" size="icon">
-                    <User className="h-5 w-5" />
-                  </Button>
+                <DropdownMenuTrigger className={buttonVariants({ variant: "ghost", size: "icon" })}>
+                  <User className="h-5 w-5" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
                   <div className="px-2 py-1.5">
@@ -88,10 +86,8 @@ export function Header() {
 
             {/* Mobile Menu */}
             <Sheet>
-              <SheetTrigger className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
+              <SheetTrigger className={buttonVariants({ variant: "ghost", size: "icon" }) + " md:hidden"}>
+                <Menu className="h-5 w-5" />
               </SheetTrigger>
               <SheetContent side="right">
                 <nav className="flex flex-col space-y-4 mt-8">
