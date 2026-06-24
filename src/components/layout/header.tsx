@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { ShoppingCart, User, Menu, Search, LogOut, Package } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
@@ -15,7 +14,6 @@ import {
 import { useSession, signOut } from "next-auth/react"
 
 export function Header() {
-  const router = useRouter()
   const { data: session } = useSession()
 
   return (
@@ -49,7 +47,7 @@ export function Header() {
 
             {session ? (
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                <DropdownMenuTrigger>
                   <Button variant="ghost" size="icon">
                     <User className="h-5 w-5" />
                   </Button>
@@ -60,14 +58,14 @@ export function Header() {
                     <p className="text-xs text-muted-foreground">{session.user?.email}</p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link href="/account">
+                  <DropdownMenuItem>
+                    <Link href="/account" className="flex items-center w-full">
                       <User className="mr-2 h-4 w-4" />
                       个人中心
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/account/orders">
+                  <DropdownMenuItem>
+                    <Link href="/account/orders" className="flex items-center w-full">
                       <Package className="mr-2 h-4 w-4" />
                       我的订单
                     </Link>
@@ -90,7 +88,7 @@ export function Header() {
 
             {/* Mobile Menu */}
             <Sheet>
-              <SheetTrigger asChild className="md:hidden">
+              <SheetTrigger className="md:hidden">
                 <Button variant="ghost" size="icon">
                   <Menu className="h-5 w-5" />
                 </Button>
