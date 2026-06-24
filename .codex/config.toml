@@ -1,0 +1,36 @@
+# Project-level Codex configuration converted from .claude/settings.local.json.
+#
+# Claude Code permissions:
+# - Read / Write
+# - Bash(npm *)
+# - Bash(git *)
+# - Bash(node *)
+# - deny Bash(rm -rf *)
+#
+# Codex does not use Claude Code's JSON allow/deny syntax. This file maps the
+# file-access part to a Codex permission profile. Shell command approval and
+# destructive-command blocking are handled by Codex approvals, rules, hooks, and
+# the global AGENTS.md instructions.
+
+default_permissions = "mini-mall-project"
+
+[features]
+hooks = true
+
+[permissions.mini-mall-project]
+extends = ":workspace"
+
+[permissions.mini-mall-project.filesystem.":workspace_roots"]
+"." = "write"
+
+# Equivalent intent for Claude Code's autoCompactThreshold = 80.
+# Codex Desktop manages context compaction at runtime; there is no direct
+# project config field with the same name.
+
+[[hooks.PostToolUse]]
+matcher = "Write|Edit"
+
+[[hooks.PostToolUse.hooks]]
+type = "command"
+command = "Write-Output 'Files were modified; review the changes before continuing.'"
+timeout = 30
