@@ -1,11 +1,19 @@
 import Link from "next/link"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/admin"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Pencil } from "lucide-react"
+import { redirect } from "next/navigation"
 
 export default async function AdminProductsPage() {
+  try {
+    await requireAdmin()
+  } catch {
+    redirect("/auth/login")
+  }
+
   const products = await prisma.product.findMany({
     include: { category: true },
     orderBy: { createdAt: "desc" },

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/admin"
 import { createProductSchema, productQuerySchema } from "@/lib/validations/product"
 
-// GET: 商品列表
+// GET: 商品列表（公开）
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
@@ -52,9 +53,11 @@ export async function GET(request: Request) {
   }
 }
 
-// POST: 创建商品
+// POST: 创建商品（仅管理员）
 export async function POST(request: Request) {
   try {
+    await requireAdmin()
+
     const body = await request.json()
     const validated = createProductSchema.parse(body)
 
@@ -74,6 +77,9 @@ export async function POST(request: Request) {
     return NextResponse.json(product, { status: 201 })
   } catch (error) {
     console.error("创建商品失败:", error)
+    if (error instanceof Error && error.message === "无权限") {
+      return NextResponse.json({ error: "需要管理员权限" }, { status: 403 })
+    }
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }

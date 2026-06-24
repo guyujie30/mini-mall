@@ -1,9 +1,17 @@
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/admin"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, Pencil } from "lucide-react"
+import { redirect } from "next/navigation"
 
 export default async function AdminCategoriesPage() {
+  try {
+    await requireAdmin()
+  } catch {
+    redirect("/auth/login")
+  }
+
   const categories = await prisma.category.findMany({
     include: { _count: { select: { products: true } } },
     orderBy: { name: "asc" },

@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/admin"
 import { updateProductSchema } from "@/lib/validations/product"
 
-// GET: 商品详情
+// GET: 商品详情（公开）
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -24,12 +25,14 @@ export async function GET(
   }
 }
 
-// PUT: 更新商品
+// PUT: 更新商品（仅管理员）
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    await requireAdmin()
+
     const body = await request.json()
     const validated = updateProductSchema.parse(body)
 
@@ -60,6 +63,9 @@ export async function PUT(
     return NextResponse.json(product)
   } catch (error) {
     console.error("更新商品失败:", error)
+    if (error instanceof Error && error.message === "无权限") {
+      return NextResponse.json({ error: "需要管理员权限" }, { status: 403 })
+    }
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }
@@ -67,12 +73,14 @@ export async function PUT(
   }
 }
 
-// DELETE: 删除商品（软删除）
+// DELETE: 删除商品（仅管理员，软删除）
 export async function DELETE(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
+    await requireAdmin()
+
     const existing = await prisma.product.findUnique({
       where: { id: params.id },
     })
@@ -89,6 +97,9 @@ export async function DELETE(
     return NextResponse.json({ message: "商品已下架" })
   } catch (error) {
     console.error("删除商品失败:", error)
+    if (error instanceof Error && error.message === "无权限") {
+      return NextResponse.json({ error: "需要管理员权限" }, { status: 403 })
+    }
     return NextResponse.json({ error: "删除商品失败" }, { status: 500 })
   }
 }

@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/admin"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye } from "lucide-react"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 
 const statusColors: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
   PENDING: "outline",
@@ -24,6 +26,12 @@ const statusLabels: Record<string, string> = {
 }
 
 export default async function AdminOrdersPage() {
+  try {
+    await requireAdmin()
+  } catch {
+    redirect("/auth/login")
+  }
+
   const orders = await prisma.order.findMany({
     include: {
       user: true,
