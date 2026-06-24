@@ -1,54 +1,111 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
+import { toast } from "sonner"
 
-// 临时模拟数据
-const initialCartItems = [
-  {
-    id: "1",
-    name: "经典白色T恤",
-    price: 99,
-    quantity: 2,
-    size: "L",
-    color: "白色",
-    image: "/images/tshirt.jpg",
-  },
-  {
-    id: "2",
-    name: "牛仔休闲裤",
-    price: 299,
-    quantity: 1,
-    size: "M",
-    color: "蓝色",
-    image: "/images/jeans.jpg",
-  },
-]
+interface CartItem {
+  id: string
+  quantity: number
+  product: {
+    id: string
+    name: string
+    price: number
+    stock: number
+  }
+}
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(initialCartItems)
+  const router = useRouter()
+  const { data: session } = useSession()
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const updateQuantity = (id: string, delta: number) => {
-    setCartItems(items =>
-      items.map(item =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
+  useEffect(() => {
+    if (!session) {
+      setLoading(false)
+      return
+    }
+
+    fetch("/api/cart")
+      .then((res) => res.json())
+      .then((data) => {
+        setCartItems(data.items || [])
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [session])
+
+  const updateQuantity = async (id: string, newQuantity: number) => {
+    try {
+      const response = await fetch(`/api/cart/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quantity: newQuantity }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        toast.error(data.error || "更新失败")
+        return
+      }
+
+      setCartItems((items) =>
+        items.map((item) =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        )
       )
+    } catch {
+      toast.error("更新失败")
+    }
+  }
+
+  const removeItem = async (id: string) => {
+    try {
+      const response = await fetch(`/api/cart/${id}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        toast.error("删除失败")
+        return
+      }
+
+      setCartItems((items) => items.filter((item) => item.id !== id))
+      toast.success("已从购物车移除")
+    } catch {
+      toast.error("删除失败")
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16 text-center">
+        加载中...
+      </div>
     )
   }
 
-  const removeItem = (id: string) => {
-    setCartItems(items => items.filter(item => item.id !== id))
+  if (!session) {
+    return (
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center space-y-6">
+          <ShoppingBag className="h-16 w-16 mx-auto text-muted-foreground" />
+          <h1 className="text-2xl font-bold">请先登录</h1>
+          <p className="text-muted-foreground">登录后查看购物车</p>
+          <Button asChild>
+            <Link href="/auth/login">去登录</Link>
+          </Button>
+        </div>
+      </div>
+    )
   }
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-  const shipping = subtotal >= 99 ? 0 : 10
-  const total = subtotal + shipping
 
   if (cartItems.length === 0) {
     return (
@@ -64,6 +121,13 @@ export default function CartPage() {
       </div>
     )
   }
+
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.product.price * item.quantity,
+    0
+  )
+  const shipping = subtotal >= 99 ? 0 : 10
+  const total = subtotal + shipping
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -94,10 +158,7 @@ export default function CartPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="font-semibold">{item.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {item.size} / {item.color}
-                        </p>
+                        <h3 className="font-semibold">{item.product.name}</h3>
                       </div>
                       <Button
                         variant="ghost"
@@ -115,7 +176,8 @@ export default function CartPage() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, -1)}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
                         >
                           <Minus className="h-3 w-3" />
                         </Button>
@@ -124,13 +186,14 @@ export default function CartPage() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => updateQuantity(item.id, 1)}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          disabled={item.quantity >= item.product.stock}
                         >
                           <Plus className="h-3 w-3" />
                         </Button>
                       </div>
                       <span className="font-bold text-primary">
-                        ¥{item.price * item.quantity}
+                        ¥{item.product.price * item.quantity}
                       </span>
                     </div>
                   </div>
