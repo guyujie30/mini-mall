@@ -6,17 +6,18 @@ import { addressSchema } from "@/lib/validations/address"
 // PUT: 更新地址
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
+    const { id } = await params
 
     const body = await request.json()
     const validated = addressSchema.parse(body)
 
     // 检查地址是否存在
     const existing = await prisma.address.findFirst({
-      where: { id: params.id, userId: user.id },
+      where: { id, userId: user.id },
     })
     if (!existing) {
       return NextResponse.json({ error: "地址不存在" }, { status: 404 })
@@ -31,7 +32,7 @@ export async function PUT(
     }
 
     const address = await prisma.address.update({
-      where: { id: params.id },
+      where: { id },
       data: validated,
     })
 
@@ -51,20 +52,21 @@ export async function PUT(
 // DELETE: 删除地址
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
+    const { id } = await params
 
     const existing = await prisma.address.findFirst({
-      where: { id: params.id, userId: user.id },
+      where: { id, userId: user.id },
     })
     if (!existing) {
       return NextResponse.json({ error: "地址不存在" }, { status: 404 })
     }
 
     await prisma.address.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "地址已删除" })

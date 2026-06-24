@@ -7,13 +7,14 @@ import { updateOrderStatusSchema } from "@/lib/validations/order"
 // GET: 订单详情
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
+    const { id } = await params
 
     const order = await prisma.order.findFirst({
-      where: { id: params.id, userId: user.id },
+      where: { id, userId: user.id },
       include: {
         items: {
           include: { product: true },
@@ -42,16 +43,17 @@ export async function GET(
 // PUT: 更新订单状态（仅管理员）
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
 
     const body = await request.json()
     const validated = updateOrderStatusSchema.parse(body)
 
     const order = await prisma.order.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
     if (!order) {
       return NextResponse.json({ error: "订单不存在" }, { status: 404 })
@@ -80,7 +82,7 @@ export async function PUT(
     if (validated.status === "DELIVERED") updateData.deliveredAt = new Date()
 
     const updated = await prisma.order.update({
-      where: { id: params.id },
+      where: { id },
       data: updateData,
       include: {
         items: { include: { product: true } },
@@ -91,6 +93,9 @@ export async function PUT(
     return NextResponse.json(updated)
   } catch (error) {
     console.error("更新订单状态失败:", error)
+    if (error instanceof Error && error.message === "无权限") {
+      return NextResponse.json({ error: "需要管理员权限" }, { status: 403 })
+    }
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 400 })
     }

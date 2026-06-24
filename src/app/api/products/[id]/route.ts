@@ -6,11 +6,13 @@ import { updateProductSchema } from "@/lib/validations/product"
 // GET: 商品详情（公开）
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
+
     const product = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { category: true },
     })
 
@@ -28,17 +30,18 @@ export async function GET(
 // PUT: 更新商品（仅管理员）
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
 
     const body = await request.json()
     const validated = updateProductSchema.parse(body)
 
     // 检查商品是否存在
     const existing = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
     if (!existing) {
       return NextResponse.json({ error: "商品不存在" }, { status: 404 })
@@ -55,7 +58,7 @@ export async function PUT(
     }
 
     const product = await prisma.product.update({
-      where: { id: params.id },
+      where: { id },
       data: validated,
       include: { category: true },
     })
@@ -76,13 +79,14 @@ export async function PUT(
 // DELETE: 删除商品（仅管理员，软删除）
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAdmin()
+    const { id } = await params
 
     const existing = await prisma.product.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
     if (!existing) {
       return NextResponse.json({ error: "商品不存在" }, { status: 404 })
@@ -90,7 +94,7 @@ export async function DELETE(
 
     // 软删除：设置为下架状态
     await prisma.product.update({
-      where: { id: params.id },
+      where: { id },
       data: { isActive: false },
     })
 

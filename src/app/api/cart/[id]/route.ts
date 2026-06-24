@@ -6,17 +6,18 @@ import { updateCartItemSchema } from "@/lib/validations/cart"
 // PUT: 更新购物车项数量
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
+    const { id } = await params
 
     const body = await request.json()
     const validated = updateCartItemSchema.parse(body)
 
     // 检查购物车项是否存在
     const cartItem = await prisma.cartItem.findFirst({
-      where: { id: params.id, userId: user.id },
+      where: { id, userId: user.id },
       include: { product: true },
     })
     if (!cartItem) {
@@ -29,7 +30,7 @@ export async function PUT(
     }
 
     const updated = await prisma.cartItem.update({
-      where: { id: params.id },
+      where: { id },
       data: { quantity: validated.quantity },
       include: { product: true },
     })
@@ -50,20 +51,21 @@ export async function PUT(
 // DELETE: 删除购物车项
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await requireAuth()
+    const { id } = await params
 
     const cartItem = await prisma.cartItem.findFirst({
-      where: { id: params.id, userId: user.id },
+      where: { id, userId: user.id },
     })
     if (!cartItem) {
       return NextResponse.json({ error: "购物车项不存在" }, { status: 404 })
     }
 
     await prisma.cartItem.delete({
-      where: { id: params.id },
+      where: { id },
     })
 
     return NextResponse.json({ message: "已从购物车移除" })

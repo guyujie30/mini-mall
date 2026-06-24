@@ -1,15 +1,16 @@
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ShoppingCart, Heart, Minus, Plus, Star, Truck, Shield, RotateCcw } from "lucide-react"
+import { Truck, Shield, RotateCcw } from "lucide-react"
 import { AddToCartButton } from "./add-to-cart-button"
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+
   const product = await prisma.product.findUnique({
-    where: { id: params.id, isActive: true },
+    where: { id, isActive: true },
     include: { category: true },
   })
 
