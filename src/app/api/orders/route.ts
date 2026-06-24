@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/session"
 import { createOrderSchema, orderQuerySchema } from "@/lib/validations/order"
+import { checkMemberUpgrade } from "@/lib/member"
 
 // 生成订单号
 function generateOrderNo(): string {
@@ -151,7 +152,13 @@ export async function POST(request: Request) {
       return newOrder
     })
 
-    return NextResponse.json(order, { status: 201 })
+    // 检查会员升级
+    const upgradeResult = await checkMemberUpgrade(user.id)
+
+    return NextResponse.json(
+      { ...order, memberUpgrade: upgradeResult },
+      { status: 201 }
+    )
   } catch (error) {
     console.error("创建订单失败:", error)
     if (error instanceof Error && error.message === "未登录") {

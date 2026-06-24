@@ -1,18 +1,27 @@
 "use client"
 
 import Link from "next/link"
-import { ShoppingCart, User, Menu, Search } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { ShoppingCart, User, Menu, Search, LogOut, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { useState } from "react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useSession, signOut } from "next-auth/react"
 
 export function Header() {
-  const [cartCount] = useState(0)
+  const router = useRouter()
+  const { data: session } = useSession()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <Container>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
@@ -24,11 +33,8 @@ export function Header() {
             <Link href="/products" className="text-sm font-medium transition-colors hover:text-primary">
               全部商品
             </Link>
-            <Link href="/categories" className="text-sm font-medium transition-colors hover:text-primary">
-              商品分类
-            </Link>
-            <Link href="/about" className="text-sm font-medium transition-colors hover:text-primary">
-              关于我们
+            <Link href="/member" className="text-sm font-medium transition-colors hover:text-primary">
+              会员中心
             </Link>
           </nav>
 
@@ -43,19 +49,49 @@ export function Header() {
             <Button variant="ghost" size="icon" className="relative" asChild>
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    {cartCount}
-                  </Badge>
-                )}
               </Link>
             </Button>
 
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/account">
-                <User className="h-5 w-5" />
-              </Link>
-            </Button>
+            {session ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <div className="px-2 py-1.5">
+                    <p className="text-sm font-medium">{session.user?.name || "用户"}</p>
+                    <p className="text-xs text-muted-foreground">{session.user?.email}</p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/account">
+                      <User className="mr-2 h-4 w-4" />
+                      个人中心
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/account/orders">
+                      <Package className="mr-2 h-4 w-4" />
+                      我的订单
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="text-destructive"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    退出登录
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="ghost" size="sm" asChild>
+                <Link href="/auth/login">登录</Link>
+              </Button>
+            )}
 
             {/* Mobile Menu */}
             <Sheet>
@@ -69,32 +105,38 @@ export function Header() {
                   <Link href="/products" className="text-lg font-medium">
                     全部商品
                   </Link>
-                  <Link href="/categories" className="text-lg font-medium">
-                    商品分类
+                  <Link href="/member" className="text-lg font-medium">
+                    会员中心
                   </Link>
-                  <Link href="/about" className="text-lg font-medium">
-                    关于我们
+                  <Link href="/cart" className="text-lg font-medium">
+                    购物车
                   </Link>
-                  <Link href="/account" className="text-lg font-medium">
-                    我的账户
-                  </Link>
-                  <Link href="/account/orders" className="text-lg font-medium">
-                    我的订单
-                  </Link>
+                  {session ? (
+                    <>
+                      <Link href="/account" className="text-lg font-medium">
+                        个人中心
+                      </Link>
+                      <Link href="/account/orders" className="text-lg font-medium">
+                        我的订单
+                      </Link>
+                      <button
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                        className="text-lg font-medium text-destructive text-left"
+                      >
+                        退出登录
+                      </button>
+                    </>
+                  ) : (
+                    <Link href="/auth/login" className="text-lg font-medium">
+                      登录
+                    </Link>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>
           </div>
         </div>
-      </Container>
+      </div>
     </header>
-  )
-}
-
-function Container({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-      {children}
-    </div>
   )
 }

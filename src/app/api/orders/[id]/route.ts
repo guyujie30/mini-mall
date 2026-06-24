@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAuth } from "@/lib/session"
+import { requireAdmin } from "@/lib/admin"
 import { updateOrderStatusSchema } from "@/lib/validations/order"
 
 // GET: 订单详情
@@ -38,13 +39,14 @@ export async function GET(
   }
 }
 
-// PUT: 更新订单状态
+// PUT: 更新订单状态（仅管理员）
 export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    // TODO: 验证管理员权限
+    await requireAdmin()
+
     const body = await request.json()
     const validated = updateOrderStatusSchema.parse(body)
 

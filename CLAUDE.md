@@ -144,11 +144,14 @@ userId + productId 联合唯一
 - `/crud-generator`: 生成 CRUD 功能模块（API + 页面 + 表单）
 
 ## 待开发
-- [ ] 后端 API
-- [ ] NextAuth 认证配置
-- [ ] Stripe 支付集成
-- [ ] 后台管理页面
-- [ ] 会员自动升级逻辑
+- [x] 后端 API（商品/购物车/订单/地址）
+- [x] NextAuth 认证配置
+- [x] Stripe 支付集成（基础配置）
+- [x] 后台管理页面
+- [x] 会员自动升级逻辑
+- [ ] 商品图片上传
+- [ ] 搜索功能优化
+- [ ] 订单详情页支付按钮
 
 <!-- superpowers-zh:begin (do not edit between these markers) -->
 # Superpowers-ZH 中文增强版
