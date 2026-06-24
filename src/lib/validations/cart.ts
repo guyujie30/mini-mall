@@ -2,8 +2,8 @@ import { z } from "zod"
 
 // 添加购物车项
 export const addToCartSchema = z.object({
-  productId: z.string().min("商品ID不能为空"),
-  quantity: z.number().int().positive("数量必须大于 0").default(1),
+  productId: z.string(),
+  quantity: z.number().int().positive().default(1),
 })
 
 // 更新购物车项数量

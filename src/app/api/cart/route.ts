@@ -39,6 +39,12 @@ export async function POST(request: Request) {
     const user = await requireAuth()
 
     const body = await request.json()
+    console.log("购物车请求数据:", body)
+
+    if (!body.productId) {
+      return NextResponse.json({ error: "商品ID不能为空" }, { status: 400 })
+    }
+
     const validated = addToCartSchema.parse(body)
 
     // 检查商品是否存在且上架

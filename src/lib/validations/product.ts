@@ -2,13 +2,13 @@ import { z } from "zod"
 
 // 创建商品验证
 export const createProductSchema = z.object({
-  name: z.string().min(1, "商品名称不能为空").max(100),
-  slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "slug 只能包含小写字母、数字和连字符"),
-  description: z.string().min(1, "商品描述不能为空"),
-  price: z.number().positive("价格必须大于 0"),
+  name: z.string().max(100),
+  slug: z.string().max(100).regex(/^[a-z0-9-]+$/, "slug 只能包含小写字母、数字和连字符"),
+  description: z.string(),
+  price: z.number().positive(),
   images: z.string().default("[]"),
   stock: z.number().int().min(0),
-  categoryId: z.string().min(1, "请选择分类"),
+  categoryId: z.string(),
   isActive: z.boolean().default(true),
   isFeatured: z.boolean().default(false),
 })

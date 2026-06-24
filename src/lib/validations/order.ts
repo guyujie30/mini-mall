@@ -2,11 +2,11 @@ import { z } from "zod"
 
 // 创建订单
 export const createOrderSchema = z.object({
-  addressId: z.string().min("请选择收货地址"),
+  addressId: z.string(),
   items: z.array(z.object({
     productId: z.string(),
     quantity: z.number().int().positive(),
-  })).min(1, "订单不能为空"),
+  })).min(1),
 })
 
 // 更新订单状态
